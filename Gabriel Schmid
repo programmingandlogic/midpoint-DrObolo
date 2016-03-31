@@ -1,0 +1,80 @@
+/*
+ * File: MidpointFindingKarel.java
+ * -------------------------------
+ * When you finish writing it, the MidpointFindingKarel class should
+ * leave a beeper on the corner closest to the center of 1st Street
+ * (or either of the two central corners if 1st Street has an even
+ * number of corners).  Karel can put down additional beepers as it
+ * looks for the midpoint, but must pick them up again before it
+ * stops.  The world may be of any size, but you are allowed to
+ * assume that it is at least as tall as it is wide.
+ */
+
+import stanford.karel.*;
+
+public class MidpointFindingKarel extends SuperKarel {
+
+	// You fill in this part
+	
+	public void run () {
+		placeBeepersEverySpot ();
+		takeAllBeepersExcludingMidpoint ();
+		goToMidpoint ();
+	}
+	
+	//Empty world, beepers are to be placed on every spot along the bottom
+	private void placeBeepersEverySpot () {
+		putBeeper ();
+		while (frontIsClear()) {
+			move ();
+			putBeeper ();
+		}
+	}
+	//Facing opposite wall, beepers filling bottom
+	
+	/*Calls getOuterBeeper, then checks for midpoint. Because front is always blocked
+	after check for midpoint, it will continue to run these until only midpoint is present */
+	private void takeAllBeepersExcludingMidpoint () {
+		while (frontIsBlocked()) {
+			getOuterBeeper ();
+			checkForMidpoint ();
+		}	
+	}
+	
+	//Turns around, moves until beeper present, takes one beeper, goes to opposite end
+	private void getOuterBeeper () {
+		turnAround ();
+		while (noBeepersPresent()) {
+			move ();
+		}
+		pickBeeper ();
+		while (frontIsClear()) {
+			move ();
+		}
+	}
+	
+	//Checks for more than one beeper, then refers back to takeAllBeepersExcludingMidpoint
+	private void checkForMidpoint () {
+		if(frontIsBlocked()) {
+			turnAround ();
+			while (noBeepersPresent()) {
+				move ();
+			}
+			if (beepersPresent()) {
+				move ();
+			}
+			if (beepersPresent()) {
+				turnAround ();
+				while (frontIsClear()) {
+					move ();
+				}
+			}
+		}
+	}
+	
+	//After running everything, Karel will always be next to the midpoint looking away
+	private void goToMidpoint () {
+		turnAround ();
+		move ();
+	}
+}
